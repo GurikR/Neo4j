@@ -122,3 +122,21 @@ WHERE toLower(p.name) ENDS WITH 'demille'
 RETURN p.name
 But with this query the index will not be used, even if present in the graph, because toLower() is used
 
+Returns list movies in which Tom Hanks acted in and Directed
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+WHERE  p.name = 'Tom Hanks'
+AND exists {(p)-[:DIRECTED]->(m)}
+RETURN p.name, labels(p), m.title
+
+Profiling queries:
+PROFILE MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+WHERE  p.name = 'Tom Hanks'
+AND exists {(p)-[:DIRECTED]->(m)}
+RETURN m.title
+
+Better query compared to above:
+PROFILE MATCH (p:Person)-[:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(p)
+WHERE  p.name = 'Tom Hanks'
+RETURN  m.title
+
+The difference between using EXPLAIN and PROFILE is that EXPLAIN provides estimates of the query steps where PROFILE provides the exact steps and number of rows retrieved for the query. Providing you are simply querying the graph and not updating anything, it is fine to execute the query multiple times using PROFILE. In fact, as part of query tuning, you should execute the query at least twice as the first execution involves the generation of the execution plan which is then cached. That is, the first PROFILE of a query will always be more expensive than subsequent queries.
