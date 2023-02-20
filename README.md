@@ -87,3 +87,38 @@ MATCH(p:Person)
 WHERE p.born.year >= 1950 AND p.born.year < 1960 AND p:Actor AND p:Director
 RETURN p.name
 
+
+MATCH (m:Movie)
+WHERE  m.title STARTS WITH 'Toy Story'
+RETURN m.title, m.released
+
+MATCH (m:Movie)
+WHERE  m.title ENDS WITH ' I'
+RETURN m.title, m.released
+
+MATCH (m:Movie)
+WHERE  m.title CONTAINS 'River'
+RETURN m.title, m.released
+
+MATCH (p:Person)
+WHERE toLower(p.name) ENDS WITH 'demille'
+RETURN p.name
+
+MATCH (p:Person)
+WHERE toUpper(p.name) ENDS WITH 'DEMILLE'
+RETURN p.name
+
+MATCH (p:Person)
+WHERE toUpper(p.name) CONTAINS ' DE '
+RETURN p.name
+
+EXPLAIN MATCH (m:Movie)
+WHERE  m.title STARTS WITH 'Toy Story'
+RETURN m.title, m.released
+This query produces the execution plan where the first step is NodeIndexSeekByRange. In this case an index will be used because it is defined in the graph.
+
+EXPLAIN MATCH (p:Person)
+WHERE toLower(p.name) ENDS WITH 'demille'
+RETURN p.name
+But with this query the index will not be used, even if present in the graph, because toLower() is used
+
