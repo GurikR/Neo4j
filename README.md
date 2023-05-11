@@ -10,6 +10,8 @@ CALL db.schema.relTypeProperties() - property types for each relationships in th
 
 SHOW CONSTRAINTS - uniqueness constraint indexes in the graph
 
+:history - lists the commands run prior to this command
+
 Testing Equality:
 MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
 WHERE p.name = 'Tom Hanks'
